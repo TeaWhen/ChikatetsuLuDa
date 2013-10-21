@@ -11,3 +11,11 @@ struct Schema {
   Column[] cols;
   int pk;
 }
+
+void create_schema() {
+
+}
+
+void drop_schema() {
+
+}

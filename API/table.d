@@ -10,3 +10,7 @@ struct Table {
 void create_table(string name, Column[] cols, int pk) {
   //
 }
+
+void drop_table(string name) {
+
+}
