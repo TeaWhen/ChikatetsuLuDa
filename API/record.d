@@ -1,17 +1,18 @@
 import std.string;
+import std.stdio;
 
 struct Record {
   //
 }
 
-void insert_record() {
-
+void insert_record(string table_name) {
+  writeln("inserting ? from ", table_name);
 }
 
-void delete_record() {
-
+void delete_record(string table_name) {
+  writeln("deleting * from ", table_name);
 }
 
-void select_record() {
-
+void select_record(string table_name) {
+  writeln("selecting * from ", table_name);
 }
