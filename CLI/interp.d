@@ -15,7 +15,7 @@ auto drop_index_reg = regex(r"^drop index ([a-z]+);$");
 auto select_reg = regex(r"^select \* from ([a-z]+);$");
 auto insert_reg = regex(r"^insert into ([a-z]+) values;$");
 auto delete_reg = regex(r"^delete from ([a-z]+);$");
-auto quit_reg = regex(r"^(exit)|(quit);$");
+auto quit_reg = regex(r"^(quit)|(exit);$");
 auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9._-]+);$");
 
 auto column_reg = regex(r"([a-z]+) ([a-z]+)(?: \(([0-9]+)\))?( unique)?,",  "g");
