@@ -79,7 +79,7 @@ void handler() {
         }
         else if (type == "int") {
           col.type = INT;
-          if (ms.captures.length == 3) {
+          if (ms.captures[4] == " unique") {
             col.is_unique = true;
           }
         }
