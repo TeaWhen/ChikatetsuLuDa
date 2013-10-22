@@ -18,7 +18,7 @@ auto delete_reg = regex(r"^delete from ([a-z]+);$");
 auto quit_reg = regex(r"^quit;$");
 auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9._-]+);$");
 
-auto column_reg = regex(r"([a-z]+) ([a-z]+)(?: \(([0-9])\))?( unique)?,",  "g");
+auto column_reg = regex(r"([a-z]+) ([a-z]+)(?: \(([0-9]+)\))?( unique)?,",  "g");
 
 void handler() {
 	while (true) {
