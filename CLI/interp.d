@@ -19,6 +19,7 @@ auto quit_reg = regex(r"^quit;$");
 auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9._-]+);$");
 
 auto column_reg = regex(r"([a-z]+) ([a-z]+)(?: \(([0-9]+)\))?( unique)?,",  "g");
+auto primary_key_reg = regex(r"primary key \( ([a-z]+) \)");
 
 void handler() {
 	while (true) {
@@ -59,7 +60,6 @@ void handler() {
       writeln(scheme);
 
       Column[] cols;
-      int pk = 0;
 
       auto ms = match(scheme, column_reg);
       while (ms.empty() == false) {
@@ -72,26 +72,37 @@ void handler() {
         if (type == "char") {
           col.type = CHAR;
           col.size = to!int(ms.captures[3]);
-
-          if (ms.captures[4] == " unique") {
-            col.is_unique = true;
-          }
         }
         else if (type == "int") {
           col.type = INT;
-          if (ms.captures[4] == " unique") {
-            col.is_unique = true;
-          }
         }
         else {
+          // Do Something
+        }
 
+        if (ms.captures[4] == " unique") {
+          col.is_unique = true;
         }
         
-
         ++cols.length;
         cols[cols.length - 1] = col;
 
         ms.popFront();
+      }
+
+      string primary_key_name = "";
+      if (match(scheme, primary_key_reg)) {
+        auto mpk = match(scheme, primary_key_reg);
+        primary_key_name = mpk.captures[1];
+      }
+
+      int pk = -1;
+      for (int i = 0; i < cols.length; i++) {
+        Column col = cols[i];
+        if (col.name == primary_key_name) {
+          pk = i;
+          break;
+        }
       }
 
       create_table(table_name, cols, pk);
