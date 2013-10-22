@@ -20,14 +20,20 @@ auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9._-]+);$");
 void handler() {
 	while (true) {
     write("chikatetsu> ");
-		string input = "";
+		string input;
 
-    foreach (line; stdin.byLine()) {
+    foreach (line_raw; stdin.byLine()) {
+      string line = to!string(strip(line_raw));
       if (input == "") {
-        input = to!string(strip(line));
+        input = line;
       }
       else {
-        input = format("%s %s", input, strip(line));
+        if (line != ";") {
+          input = format("%s %s", input, line);
+        }
+        else {
+          input = format("%s%s", input, line);
+        }
       }
       if (endsWith(input, ";")) {
         break;
