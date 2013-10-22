@@ -1,6 +1,8 @@
 import std.string;
 import std.stdio;
 import std.regex;
+import std.conv;
+
 import table;
 import record;
 import index;
@@ -18,9 +20,20 @@ auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9._-]+);$");
 void handler() {
 	while (true) {
     write("chikatetsu> ");
-		string input = chomp(readln());
+		string input = "";
 
-    // TODO deal with muli lines
+    foreach (line; stdin.byLine()) {
+      if (input == "") {
+        input = to!string(strip(line));
+      }
+      else {
+        input = format("%s %s", input, strip(line));
+      }
+      if (endsWith(input, ";")) {
+        break;
+      }
+      write("chikatetsu. ");
+    }
 
     if (match(input, drop_table_reg)) {
       auto m = match(input, drop_table_reg);
