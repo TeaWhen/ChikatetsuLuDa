@@ -1,0 +1,1 @@
+dmd *.d */*.d -ofchikatetsu

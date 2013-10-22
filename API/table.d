@@ -1,5 +1,6 @@
 import std.string;
 import schema;
+import index;
 
 struct Table {
   string name;
