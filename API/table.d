@@ -14,7 +14,7 @@ void create_table(string name, Column[] cols, int pk) {
   writeln(name);
   for (int i = 0; i < cols.length; i++) {
     Column col = cols[i];
-    writeln(col.name);
+    writeln(col.name, " ", col.type, " ", col.size, " ", col.is_unique);
   }
   writeln(pk);
 }

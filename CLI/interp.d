@@ -18,7 +18,7 @@ auto delete_reg = regex(r"^delete from ([a-z]+);$");
 auto quit_reg = regex(r"^quit;$");
 auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9._-]+);$");
 
-auto column_reg = regex(r"([a-z]+) ([a-z]+),",  "g");
+auto column_reg = regex(r"([a-z]+) ([a-z]+)(?: \(([0-9])\))?( unique)?,",  "g");
 
 void handler() {
 	while (true) {
@@ -60,22 +60,33 @@ void handler() {
 
       Column[] cols;
       int pk = 0;
+
       auto ms = match(scheme, column_reg);
       while (ms.empty() == false) {
         Column col;
         col.name = ms.captures[1];
+        col.is_unique = false;
+        col.size = 0;
+
         string type = ms.captures[2];
         if (type == "char") {
           col.type = CHAR;
+          col.size = to!int(ms.captures[3]);
+
+          if (ms.captures[4] == " unique") {
+            col.is_unique = true;
+          }
         }
         else if (type == "int") {
           col.type = INT;
+          if (ms.captures.length == 3) {
+            col.is_unique = true;
+          }
         }
         else {
 
         }
-        col.size = 0;
-        col.is_unique = false;
+        
 
         ++cols.length;
         cols[cols.length - 1] = col;
