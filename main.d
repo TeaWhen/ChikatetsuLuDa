@@ -1,5 +1,5 @@
 import std.stdio;
-import interp;
+import CLI.interp;
 
 void main(string args[]) {
   writeln("Welcome to the Chikatetsu monitor. Command ends with “;”.");

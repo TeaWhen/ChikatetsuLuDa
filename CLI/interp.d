@@ -3,10 +3,10 @@ import std.stdio;
 import std.regex;
 import std.conv;
 
-import table;
-import record;
-import index;
-import schema;
+import API.table;
+import API.record;
+import API.index;
+import API.schema;
 
 auto create_table_reg = regex(r"^create table ([a-z]+) \(([ a-z\(\)0-9,]+)\);$");
 auto drop_table_reg = regex(r"^drop table ([a-z]+);$");

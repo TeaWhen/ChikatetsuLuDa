@@ -1,8 +1,8 @@
 import std.string;
 import std.stdio;
 
-import schema;
-import index;
+import API.schema;
+import API.index;
 
 struct Table {
   string name;

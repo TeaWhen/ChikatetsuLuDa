@@ -1,12 +1,28 @@
 PROGRAM = chikatetsu
-COMPILER = dmd
-FLAGS =
+DCC = dmd
+DFLAGS = -w -g -debug
+SRCDIRS = . API CFI CLI
+SRCS = $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.d))
+OBJS = $(SRCS:.d=.o)
 
-all:
-	$(COMPILER) *.d */*.d $(FLAGS) -of$(PROGRAM)
+all: $(PROGRAM)
 
-run: all
-	./chikatetsu
+$(PROGRAM): $(OBJS)
+	$(DCC) $(DFLAGS) -of$@ $(OBJS)
+
+%.o: %.d
+	$(DCC) $(DFLAGS) -c $< -of$*.o
+
+rebuild: clean all
 
 clean:
-	rm -f *.o
+	rm -f *.o $(PROGRAM)
+
+# debug use only
+show:
+	@echo 'PROGRAM   :' $(PROGRAM)
+	@echo 'DCC       :' $(DCC)
+	@echo 'DFLAGS    :' $(DFLAGS)
+	@echo 'SRCDIRS   :' $(SRCDIRS)
+	@echo 'SRCS      :' $(SRCS)
+	@echo 'OBJS      :' $(OBJS)
