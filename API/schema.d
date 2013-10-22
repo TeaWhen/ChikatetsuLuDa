@@ -1,8 +1,11 @@
 import std.string;
 
+enum CHAR = 0;
+enum INT = 1;
+
 struct Column {
   string name;
-  enum type;
+  int type;
   int size;
   bool is_unique;
 }
