@@ -11,8 +11,13 @@ struct Column {
 }
 
 struct Schema {
+  string name;
   Column[] cols;
   int pk;
+}
+
+void load_schema() {
+  
 }
 
 void create_schema() {

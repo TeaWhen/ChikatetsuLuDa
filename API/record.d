@@ -2,7 +2,8 @@ import std.string;
 import std.stdio;
 
 struct Record {
-  //
+  int column_id;
+  string data;
 }
 
 void insert_record(string table_name) {
