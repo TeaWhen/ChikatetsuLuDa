@@ -9,6 +9,7 @@ import API.table;
 import API.record;
 import API.index;
 import API.schema;
+import API.common;
 
 auto create_table_reg = regex(r"^create table ([a-z]+) \(([ a-z\(\)0-9,]+)\);$");
 auto drop_table_reg = regex(r"^drop table ([a-z]+);$");
@@ -53,6 +54,9 @@ string get_input(File f) {
       break;
     }
     // write("chikatetsu. ");
+  }
+  if (f.eof()) {
+    input = "quit;";
   }
   return input;
 }

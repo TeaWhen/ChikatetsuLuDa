@@ -4,13 +4,7 @@ import std.stdio;
 import API.schema;
 import API.index;
 import CFI.buffer;
-
-Table[string] table_schema;
-
-struct Table {
-  Schema schema;
-  Index[] indexes;
-}
+import API.common;
 
 void create_table(string name, Column[] cols, int pk) {
   writeln(name);
@@ -25,7 +19,7 @@ void create_table(string name, Column[] cols, int pk) {
   table.schema.cols = cols;
   table.schema.pk = pk;
 
-  table_schema[name] = table;
+  tables[name] = table;
 
   int ret = create_file(name);
   if (ret != 0) {
@@ -36,7 +30,7 @@ void create_table(string name, Column[] cols, int pk) {
 void drop_table(string name) {
   writeln("dropping table ", name);
 
-  bool is_table_exist = table_schema.remove(name);
+  bool is_table_exist = tables.remove(name);
   if (is_table_exist == false) {
     writeln("table doesn't exist.");
   }

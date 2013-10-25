@@ -1,29 +1,15 @@
 import std.string;
 
-enum CHAR = 0;
-enum INT = 1;
+import API.common;
 
-struct Column {
-  string name;
-  int type;
-  int size;
-  bool is_unique;
-}
-
-struct Schema {
-  string name;
-  Column[] cols;
-  int pk;
-}
-
-void load_schema() {
+void load_schema(string name) {
   
 }
 
-void create_schema() {
+void create_schema(string name, Schema schema) {
 
 }
 
-void drop_schema() {
+void drop_schema(string name) {
 
 }
