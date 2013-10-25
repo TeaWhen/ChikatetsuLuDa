@@ -16,7 +16,7 @@ void main(string args[]) {
 }
 
 void load_meta() {
-  auto f = load_file("meta.ckt");
+  auto f = load_file(META_FILE_NAME);
   foreach (line_raw; f.byLine()) {
     string line = to!string(strip(line_raw));
     if (line != "") {
@@ -29,7 +29,9 @@ void load_meta() {
 
 void load_tables() {
   foreach (table_name; table_names) {
-    tables[table_name].schema = load_schema(table_name);
-    tables[table_name].indexes = load_indexes(table_name);
+    Table table;
+    table.schema = load_schema(table_name);
+    table.indexes = load_indexes(table_name);
+    tables[table_name] = table;
   }
 }

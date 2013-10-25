@@ -32,3 +32,5 @@ struct Record {
 
 enum CHAR = 0;
 enum INT = 1;
+
+const bool DEBUG = false;

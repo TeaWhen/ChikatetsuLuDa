@@ -7,12 +7,17 @@ import CFI.buffer;
 import API.common;
 
 void create_table(string name, Column[] cols, int pk) {
-  writeln(name);
-  for (int i = 0; i < cols.length; i++) {
-    Column col = cols[i];
-    writeln(col.name, " ", col.type, " ", col.size, " ", col.is_unique);
+  if (DEBUG) {
+    writeln(name);
+    for (int i = 0; i < cols.length; i++) {
+      Column col = cols[i];
+      writeln(col.name, " ", col.type, " ", col.size, " ", col.is_unique);
+    }
+    writeln(pk);
   }
-  writeln(pk);
+
+  auto f = edit_file(META_FILE_NAME);
+  f.writeln(name);
 
   Table table;
   table.schema.name = name;

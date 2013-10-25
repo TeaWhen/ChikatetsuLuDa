@@ -118,7 +118,12 @@ void _handler(string input) {
         }
       }
 
-      create_table(table_name, cols, pk);
+      if (table_name in tables) {
+        writeln(table_name, " is already in the database.");
+      }
+      else {
+        create_table(table_name, cols, pk);
+      }
       return;
     }
 
