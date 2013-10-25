@@ -2,8 +2,9 @@ import std.string;
 
 import API.common;
 
-void load_schema(string name) {
-  
+Schema load_schema(string name) {
+  Schema schema;
+  return schema;
 }
 
 void create_schema(string name, Schema schema) {
