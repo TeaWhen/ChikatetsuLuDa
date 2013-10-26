@@ -16,13 +16,16 @@ auto drop_table_reg = regex(r"^drop table ([a-z]+);$");
 auto create_index_reg = regex(r"^create index ([a-z]+) on ([a-z]+) \( ([a-z]+) \);$");
 auto drop_index_reg = regex(r"^drop index ([a-z]+);$");
 auto select_reg = regex(r"^select \* from ([a-z]+);$");
-auto insert_reg = regex(r"^insert into ([a-z]+) values;$");
+auto insert_reg = regex(r"^insert into ([a-z]+) values \([\w\d', ]+\);$");
 auto delete_reg = regex(r"^delete from ([a-z]+);$");
 auto quit_reg = regex(r"^(quit)|(exit);$");
 auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9./_]+);$");
 
 auto column_reg = regex(r"([a-z]+) ([a-z]+)(?: \(([0-9]+)\))?( unique)?,",  "g");
 auto primary_key_reg = regex(r"primary key \( ([a-z]+) \)");
+auto values_reg_raw = regex(r"\([\w\d', ]+\)");
+auto values_reg = regex(r"'?([\w\d]+)'?", "g");
+// need to support space
 
 void handler() {
 	while (true) {
@@ -160,7 +163,16 @@ void _handler(string input) {
     if (match(input, insert_reg)) {
       auto m = match(input, insert_reg);
       string table_name = m.captures[1];
-      insert_record(table_name);
+      m = match(input, values_reg_raw);
+      string values_raw = m.captures[0];
+      m = match(values_raw, values_reg);
+      string[] values;
+      while (m.empty() == false) {
+        ++values.length;
+        values[values.length - 1] = m.captures[1];
+        m.popFront();
+      }
+      insert_record(table_name, values);
       return;
     }
 

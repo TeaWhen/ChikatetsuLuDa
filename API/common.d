@@ -6,6 +6,7 @@ string[] table_names;
 struct Table {
   Schema schema;
   Index[] indexes;
+  Record[] records;
 }
 
 struct Schema {
@@ -26,8 +27,7 @@ struct Column {
 }
 
 struct Record {
-  int column_id;
-  string data;
+  string[] values;
 }
 
 enum CHAR = 0;
