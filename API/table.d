@@ -5,6 +5,8 @@ import API.schema;
 import API.index;
 import CFI.buffer;
 import API.common;
+import API.index;
+import API.meta;
 
 void create_table(string name, Column[] cols, int pk) {
   if (DEBUG) {
@@ -16,7 +18,7 @@ void create_table(string name, Column[] cols, int pk) {
     writeln(pk);
   }
 
-  auto f = edit_file(META_FILE_NAME);
+  auto f = append_file(META_FILE_NAME);
   f.writeln(name);
 
   Table table;
@@ -36,9 +38,18 @@ void drop_table(string name) {
     writeln("table doesn't exist.");
   }
   else {
-    int ret = delete_file(name);
-    if (ret != 0) {
-      writeln("something is wrong.");
+    delete_file(META_FILE_NAME);
+    auto f = create_file(META_FILE_NAME);
+    for (int i = 0; i < table_names.length; i++) {
+      if (table_names[i] == name) {
+        continue;
+      }
+      else {
+        f.writeln(table_names[i]);
+      }
     }
+    load_meta();
+    drop_schema(name);
+    drop_index(name);
   }
 }

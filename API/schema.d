@@ -43,5 +43,6 @@ void save_schema(string name, Schema schema) {
 }
 
 void drop_schema(string name) {
-
+  string file_name = format("%s.%s", name, SCHEMA_EXTENSION);
+  delete_file(file_name);
 }
