@@ -8,13 +8,6 @@ struct Table {
   Index[] indexes;
 }
 
-struct Column {
-  string name;
-  int type;
-  int size;
-  bool is_unique;
-}
-
 struct Schema {
   string name;
   Column[] cols;
@@ -23,6 +16,13 @@ struct Schema {
 
 struct Index {
   string name;
+}
+
+struct Column {
+  string name;
+  int type;
+  int size;
+  bool is_unique;
 }
 
 struct Record {

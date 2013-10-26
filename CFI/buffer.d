@@ -4,6 +4,7 @@ import std.file;
 
 const string BASE_PATH = "data";
 const string META_FILE_NAME = "meta.ckt";
+const string SCHEMA_EXTENSION = "schema";
 
 File load_file(string filename) {
   _init();
@@ -14,11 +15,10 @@ File load_file(string filename) {
   return File(path, "r");
 }
 
-int create_file(string filename) {
+File create_file(string filename) {
   _init();
   string path = format("%s/%s", BASE_PATH, filename);
-  std.file.write(path, "");
-  return 0;
+  return File(path, "w");
 }
 
 int delete_file(string filename) {

@@ -23,13 +23,9 @@ void create_table(string name, Column[] cols, int pk) {
   table.schema.name = name;
   table.schema.cols = cols;
   table.schema.pk = pk;
-
   tables[name] = table;
 
-  int ret = create_file(name);
-  if (ret != 0) {
-    writeln("something is wrong.");
-  }
+  save_schema(name, table.schema);
 }
 
 void drop_table(string name) {
