@@ -30,6 +30,19 @@ struct Record {
   string data;
 }
 
+interface Cell {
+  bool less_than(Cell other);
+  bool greater_than(Cell other);
+  string value();
+}
+
+class CKInt : Cell {
+  private int cell_value;
+  override bool less_than(Cell other) {
+    //
+  }
+}
+
 enum CHAR = 0;
 enum INT = 1;
 
