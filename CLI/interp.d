@@ -156,7 +156,17 @@ void _handler(string input) {
     if (match(input, select_reg)) {
       auto m = match(input, select_reg);
       string table_name = m.captures[1];
-      select_record(table_name);
+      Record[] records = select_record(table_name);
+      for (int i = 0; i < tables[table_name].schema.cols.length; i++) {
+        write(tables[table_name].schema.cols[i].name, '\t');
+      }
+      writeln("");
+      for (int i = 0; i < tables[table_name].records.length; i++) {
+        for (int j = 0; j < tables[table_name].schema.cols.length; j++){
+          write(tables[table_name].records[i].values[j], '\t');
+        }
+        writeln("");
+      }
       return;
     }
 

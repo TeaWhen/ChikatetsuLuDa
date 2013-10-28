@@ -5,6 +5,7 @@ import std.file;
 const string BASE_PATH = "data";
 const string META_FILE_NAME = "meta.ckt";
 const string SCHEMA_EXTENSION = "schema";
+const string RECORD_EXTENSION = "record";
 
 File load_file(string filename) {
   _init();

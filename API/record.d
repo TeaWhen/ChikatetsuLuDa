@@ -2,16 +2,21 @@ import std.string;
 import std.stdio;
 
 import API.common;
+import CFI.buffer;
 
 void insert_record(string table_name, string[] values) {
-  writeln("inserting ? from ", table_name);
   if (table_name in tables) {
     // TODO: type checking...
-    ulong length = tables[table_name].records.length;
-    ++tables[table_name].records.length;
+    ulong length = ++tables[table_name].records.length;
     Record record;
     record.values = values;
-    tables[table_name].records[length] = record;
+    tables[table_name].records[length - 1] = record;
+
+    string file_name = format("%s.%s", table_name, RECORD_EXTENSION);
+    File f = append_file(file_name);
+    for (int i = 0; i < values.length; i++) {
+      f.writeln(values[i]);
+    }
   }
   else {
     writeln(table_name, " doesn't exist.");
@@ -22,6 +27,8 @@ void delete_record(string table_name) {
   writeln("deleting * from ", table_name);
 }
 
-void select_record(string table_name) {
+Record[] select_record(string table_name) {
   writeln("selecting * from ", table_name);
+  Record[] records = tables[table_name].records;
+  return records;
 }
