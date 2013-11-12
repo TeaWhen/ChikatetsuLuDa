@@ -173,7 +173,6 @@ void _handler(string input) {
     }
 
     if (match(input, insert_reg)) {
-      writeln(input);
       auto m = match(input, insert_reg);
       string table_name = m.captures[1];
       m = match(input, values_reg_raw);
