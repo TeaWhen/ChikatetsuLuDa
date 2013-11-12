@@ -15,7 +15,7 @@ auto create_table_reg = regex(r"^create table ([a-z]+) \(([ a-z\(\)0-9,]+)\);$")
 auto drop_table_reg = regex(r"^drop table ([a-z]+);$");
 auto create_index_reg = regex(r"^create index ([a-z]+) on ([a-z]+) \( ([a-z]+) \);$");
 auto drop_index_reg = regex(r"^drop index ([a-z]+);$");
-auto select_reg = regex(r"^select \* from ([a-z]+);$");
+auto select_reg = regex(r"^select \* from ([a-z]+) where .+;$");
 auto insert_reg = regex(r"^insert into ([a-z]+) values \([\wA-Z\d', ]+\);$");
 auto delete_reg = regex(r"^delete from ([a-z]+);$");
 auto quit_reg = regex(r"^(quit)|(exit);$");
@@ -25,6 +25,7 @@ auto column_reg = regex(r"([a-z]+) ([a-z]+)(?: \(([0-9]+)\))?( unique)?,",  "g")
 auto primary_key_reg = regex(r"primary key \( ([a-z]+) \)");
 auto values_reg_raw = regex(r"\([\w\d', ]+\)");
 auto values_reg = regex(r"'?([\w\d]+)'?", "g");
+auto where_reg = regex(r"([\w]+) ?([=><]) ?([\d]+)", "g");
 // need to support space
 
 void handler() {
@@ -158,6 +159,24 @@ void _handler(string input) {
     if (match(input, select_reg)) {
       auto m = match(input, select_reg);
       string table_name = m.captures[1];
+
+      Predict[] predicts;
+      m = match(input, where_reg);
+      while (m.empty() == false) {
+        Predict predict;
+        predict.col_name = m.captures[1];
+        switch (m.captures[2]) {
+          case "=":
+            predict.op_type = PredictOPType.eq;
+            break;
+          default:
+            writeln("nop");
+        }
+        predict.value = m.captures[3];
+        predicts ~= predict;
+        m.popFront();
+      }
+
       Record[] records = select_record(table_name);
       for (int i = 0; i < tables[table_name].schema.cols.length; i++) {
         write(tables[table_name].schema.cols[i].name, '\t');
