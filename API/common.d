@@ -30,6 +30,14 @@ struct Record {
   string[] values;
 }
 
+enum PredictOPType { eq, neq, lt, gt, leq, geq }
+
+struct Predict {
+  string col_name;
+  PredictOPType op_type;
+  string value;
+}
+
 enum CHAR = 0;
 enum INT = 1;
 
