@@ -1,5 +1,6 @@
 import std.string;
 import std.stdio;
+import std.conv;
 
 import API.common;
 import CFI.buffer;
@@ -29,5 +30,26 @@ void delete_record(string table_name) {
 Record[] select_record(string table_name) {
   writeln("selecting * from ", table_name);
   Record[] records = tables[table_name].records;
+  return records;
+}
+
+Record[] load_records(string table_name, Schema schema) {
+  Record[] records;
+  string file_name = format("%s.%s", table_name, RECORD_EXTENSION);
+  auto f = load_file(file_name);
+  int counter = 0;
+  auto length = schema.cols.length;
+  string[] values;
+  foreach (line; f.byLine()) {
+    counter++;
+    values ~= to!string(strip(line));
+    if (counter == length) {
+      Record record;
+      record.values = values;
+      records ~= record;
+      counter = 0;
+      values.length = 0;
+    }
+  }
   return records;
 }

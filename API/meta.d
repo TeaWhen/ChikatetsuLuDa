@@ -6,6 +6,7 @@ import API.common;
 import API.schema;
 import CFI.buffer;
 import API.index;
+import API.record;
 
 void load_meta() {
   auto f = load_file(META_FILE_NAME);
@@ -24,6 +25,7 @@ void load_tables() {
     Table table;
     table.schema = load_schema(table_name);
     table.indexes = load_indexes(table_name);
+    table.records = load_records(table_name, table.schema);
     tables[table_name] = table;
   }
 }
