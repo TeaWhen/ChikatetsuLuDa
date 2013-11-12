@@ -7,10 +7,9 @@ import CFI.buffer;
 void insert_record(string table_name, string[] values) {
   if (table_name in tables) {
     // TODO: type checking...
-    ulong length = ++tables[table_name].records.length;
     Record record;
     record.values = values;
-    tables[table_name].records[length - 1] = record;
+    tables[table_name].records ~= record;
 
     string file_name = format("%s.%s", table_name, RECORD_EXTENSION);
     File f = append_file(file_name);
