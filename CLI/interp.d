@@ -16,7 +16,7 @@ auto drop_table_reg = regex(r"^drop table ([a-z]+);$");
 auto create_index_reg = regex(r"^create index ([a-z]+) on ([a-z]+) \( ([a-z]+) \);$");
 auto drop_index_reg = regex(r"^drop index ([a-z]+);$");
 auto select_reg = regex(r"^select \* from ([a-z]+);$");
-auto insert_reg = regex(r"^insert into ([a-z]+) values \([\w\d', ]+\);$");
+auto insert_reg = regex(r"^insert into ([a-z]+) values \([\wA-Z\d', ]+\);$");
 auto delete_reg = regex(r"^delete from ([a-z]+);$");
 auto quit_reg = regex(r"^(quit)|(exit);$");
 auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9./_]+);$");
@@ -37,29 +37,31 @@ void handler() {
 
 string get_input(File f) {
   string input;
-  foreach (line_raw; f.byLine()) {
-    string line = to!string(strip(line_raw));
-    if (line == "") {
-      break;
-    }
-    if (input == "") {
-      input = line;
-    }
-    else {
-      if (line != ";") {
-        input = format("%s %s", input, line);
-      }
-      else {
-        input = format("%s%s", input, line);
-      }
-    }
-    if (endsWith(input, ";")) {
-      break;
-    }
-    // write("chikatetsu. ");
-  }
   if (f.eof()) {
     input = "quit;";
+  }
+  else {
+    foreach (line_raw; f.byLine()) {
+      string line = to!string(strip(line_raw));
+      if (line == "") {
+        break;
+      }
+      if (input == "") {
+        input = line;
+      }
+      else {
+        if (line != ";") {
+          input = format("%s %s", input, line);
+        }
+        else {
+          input = format("%s%s", input, line);
+        }
+      }
+      if (endsWith(input, ";")) {
+        break;
+      }
+      // write("chikatetsu. ");
+    }
   }
   return input;
 }
@@ -171,6 +173,7 @@ void _handler(string input) {
     }
 
     if (match(input, insert_reg)) {
+      writeln(input);
       auto m = match(input, insert_reg);
       string table_name = m.captures[1];
       m = match(input, values_reg_raw);
@@ -212,10 +215,14 @@ void _handler(string input) {
 
 void execfile(string file_name) {
   if (exists(file_name)) {
-    // TODO support many statments in a single file
     auto f = File(file_name, "r");
-    string input = get_input(f);
-    _handler(input);
+    while (true) {
+      string input = get_input(f);
+      _handler(input);
+      if (f.eof()) {
+        return;
+      }
+    }
   }
   else {
     writeln(file_name, " does not exists.");
