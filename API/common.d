@@ -19,9 +19,11 @@ struct Index {
   string name;
 }
 
+enum ColType { CKint, CKfloat, CKchar }
+
 struct Column {
   string name;
-  int type;
+  ColType type;
   int size;
   bool is_unique;
 }
@@ -37,8 +39,5 @@ struct Predict {
   PredictOPType op_type;
   string value;
 }
-
-enum CHAR = 0;
-enum INT = 1;
 
 const bool DEBUG = false;

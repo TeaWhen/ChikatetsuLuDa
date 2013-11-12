@@ -88,11 +88,11 @@ void _handler(string input) {
 
         string type = ms.captures[2];
         if (type == "char") {
-          col.type = CHAR;
+          col.type = ColType.CKchar;
           col.size = to!int(ms.captures[3]);
         }
         else if (type == "int") {
-          col.type = INT;
+          col.type = ColType.CKint;
         }
         else {
           // Do Something
