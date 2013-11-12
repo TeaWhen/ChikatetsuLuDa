@@ -27,10 +27,28 @@ void delete_record(string table_name) {
   writeln("deleting * from ", table_name);
 }
 
-Record[] select_record(string table_name) {
+Record[] select_record(string table_name, Predict[] predicts) {
   writeln("selecting * from ", table_name);
   Record[] records = tables[table_name].records;
-  return records;
+  Record[] result;
+  foreach (record; records) {
+    bool vaild = true;
+    foreach (predict; predicts) {
+      switch (predict.op_type) {
+        case PredictOPType.eq:
+          if (record.values[predict.col_index] != predict.value) {
+            vaild = false;
+          }
+          break;
+        default:
+          writeln("something is wrong.");
+      }
+    }
+    if (vaild) {
+      result ~= record;
+    }
+  }
+  return result;
 }
 
 Record[] load_records(string table_name, Schema schema) {

@@ -164,7 +164,13 @@ void _handler(string input) {
       m = match(input, where_reg);
       while (m.empty() == false) {
         Predict predict;
-        predict.col_name = m.captures[1];
+        string col_name = m.captures[1];
+        for (int i = 0; i < tables[table_name].schema.cols.length; i++) {
+          if (col_name == tables[table_name].schema.cols[i].name) {
+            predict.col_index = i;
+            break;
+          }
+        }
         switch (m.captures[2]) {
           case "=":
             predict.op_type = PredictOPType.eq;
@@ -177,14 +183,14 @@ void _handler(string input) {
         m.popFront();
       }
 
-      Record[] records = select_record(table_name);
+      Record[] records = select_record(table_name, predicts);
       for (int i = 0; i < tables[table_name].schema.cols.length; i++) {
         write(tables[table_name].schema.cols[i].name, '\t');
       }
       writeln("");
-      for (int i = 0; i < tables[table_name].records.length; i++) {
+      for (int i = 0; i < records.length; i++) {
         for (int j = 0; j < tables[table_name].schema.cols.length; j++){
-          write(tables[table_name].records[i].values[j], '\t');
+          write(records[i].values[j], '\t');
         }
         writeln("");
       }
