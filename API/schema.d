@@ -17,7 +17,7 @@ Schema load_schema(string name) {
   for (int i = 0; i < length; i++) {
     Column col;
     col.name = strip(f.readln());
-    col.type = to!int(strip(f.readln()));
+    col.type = to!ColType(strip(f.readln()));
     col.size = to!int(strip(f.readln()));
     col.is_unique = to!bool(strip(f.readln()));
     cols[i] = col;

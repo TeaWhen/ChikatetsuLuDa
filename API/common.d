@@ -17,7 +17,7 @@ struct Schema {
   int pk;
 }
 
-enum ColType { CKint, CKfloat, CKchar }
+enum ColType { CKint = 0, CKfloat = 1, CKchar = 2 }
 
 struct Column {
   string name;
