@@ -37,13 +37,11 @@ Record[] select_record(string table_name, Predict[] predicts) {
     for (ulong i = 0; i < tables[table_name].indexes.length; i++) {
       if (tables[table_name].indexes[i].col_index == predict.col_index) {
         is_indexed = true;
-        writeln(predict.value);
         ulong[] indexes_raw = tables[table_name].indexes[i].btree.find(predict.value);
-        writeln(indexes_raw);
         ulong[] indexes_t;
         for (ulong j = 0; j < indexes.length; j++) {
           for (ulong k = 0; k < indexes_raw.length; k++) {
-            if (indexes[j] == indexes_t[k]) {
+            if (indexes[j] == indexes_raw[k]) {
               indexes_t ~= indexes[j];
             }
           }
