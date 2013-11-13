@@ -1,6 +1,6 @@
 PROGRAM = chikatetsu
 DCC = dmd
-DFLAGS = -w -g -debug
+DFLAGS = -w -O
 SRCDIRS = . API CFI CLI
 SRCS = $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.d))
 OBJS = $(SRCS:.d=.o)
@@ -16,7 +16,7 @@ $(PROGRAM): $(OBJS)
 rebuild: clean all
 
 clean:
-	rm -f *.o $(PROGRAM)
+	rm -f *.o */*.o $(PROGRAM)
 
 # debug use only
 show:
