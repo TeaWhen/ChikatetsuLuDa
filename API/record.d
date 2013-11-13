@@ -141,6 +141,51 @@ bool validation(Table table, Record record, Predict[] predicts) {
             }
           }
           break;
+        case PredictOPType.gt:
+          if (table.schema.cols[predict.col_index].type == ColType.CKint) {
+            if (to!int(record.values[predict.col_index]) <= to!int(predict.value)) {
+              valid = false;
+            }
+          } else if (table.schema.cols[predict.col_index].type == ColType.CKfloat) {
+            if (to!float(record.values[predict.col_index]) <= to!float(predict.value)) {
+              valid = false;
+            }
+          } else {
+            if (record.values[predict.col_index] <= predict.value) {
+              valid = false;
+            }
+          }
+          break;
+        case PredictOPType.leq:
+          if (table.schema.cols[predict.col_index].type == ColType.CKint) {
+            if (to!int(record.values[predict.col_index]) > to!int(predict.value)) {
+              valid = false;
+            }
+          } else if (table.schema.cols[predict.col_index].type == ColType.CKfloat) {
+            if (to!float(record.values[predict.col_index]) > to!float(predict.value)) {
+              valid = false;
+            }
+          } else {
+            if (record.values[predict.col_index] > predict.value) {
+              valid = false;
+            }
+          }
+          break;
+        case PredictOPType.geq:
+          if (table.schema.cols[predict.col_index].type == ColType.CKint) {
+            if (to!int(record.values[predict.col_index]) < to!int(predict.value)) {
+              valid = false;
+            }
+          } else if (table.schema.cols[predict.col_index].type == ColType.CKfloat) {
+            if (to!float(record.values[predict.col_index]) < to!float(predict.value)) {
+              valid = false;
+            }
+          } else {
+            if (record.values[predict.col_index] < predict.value) {
+              valid = false;
+            }
+          }
+          break;
         default:
           writeln("unknown error in API.record.validation !");
       }
