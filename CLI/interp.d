@@ -17,7 +17,7 @@ auto create_index_reg = regex(r"^create index ([a-z]+) on ([a-z]+) \( ([a-z]+) \
 auto drop_index_reg = regex(r"^drop index ([a-z]+);$");
 auto select_reg = regex(r"^select \* from ([a-z]+)( where .+;$)?");
 auto insert_reg = regex(r"^insert into ([a-z]+) values \([\wA-Z\d', ]+\);$");
-auto delete_reg = regex(r"^delete from ([a-z]+);$");
+auto delete_reg = regex(r"^delete from ([a-z]+)( where .+;$)?");
 auto quit_reg = regex(r"^(quit)|(exit);$");
 auto execfile_reg = regex(r"^execfile ([a-zA-Z0-9./_]+);$");
 
@@ -217,12 +217,37 @@ void _handler(string input) {
     if (match(input, delete_reg)) {
       auto m = match(input, delete_reg);
       string table_name = m.captures[1];
-      delete_record(table_name);
+      
+      Predict[] predicts;
+      m = match(input, where_reg);
+      while (m.empty() == false) {
+        Predict predict;
+        string col_name = m.captures[1];
+        for (int i = 0; i < tables[table_name].schema.cols.length; i++) {
+          if (col_name == tables[table_name].schema.cols[i].name) {
+            predict.col_index = i;
+            break;
+          }
+        }
+        switch (m.captures[2]) {
+          case "=":
+            predict.op_type = PredictOPType.eq;
+            break;
+          default:
+            writeln("nop");
+        }
+        predict.value = m.captures[3];
+        predicts ~= predict;
+        m.popFront();
+      }
+
+      delete_record(table_name, predicts);
       return;
     }
 
     if (match(input, quit_reg)) {
       writeln("Bye.");
+      save_records();
       exit(0);
     }
 

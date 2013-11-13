@@ -11,20 +11,36 @@ void insert_record(string table_name, string[] values) {
     Record record;
     record.values = values;
     tables[table_name].records ~= record;
-
-    string file_name = format("%s.%s", table_name, RECORD_EXTENSION);
-    File f = append_file(file_name);
-    for (int i = 0; i < values.length; i++) {
-      f.writeln(values[i]);
-    }
   }
   else {
     writeln(table_name, " doesn't exist.");
   }
 }
 
-void delete_record(string table_name) {
-  writeln("deleting * from ", table_name);
+void delete_record(string table_name, Predict[] predicts) {
+  if (table_name in tables) {
+    Record[] result;
+    foreach (record; tables[table_name].records) {
+      bool valid = true;
+      foreach (predict; predicts) {
+        if (valid) {
+          switch (predict.op_type) {
+            case PredictOPType.eq:
+              if (record.values[predict.col_index] != predict.value) {
+                valid = false;
+              }
+              break;
+            default:
+              writeln("something is wrong.");
+          }
+        }
+      }
+      if (!valid) {
+        result ~= record;
+      }
+    }
+    tables[table_name].records = result;
+  }
 }
 
 Record[] select_record(string table_name, Predict[] predicts) {
@@ -62,23 +78,34 @@ Record[] select_record(string table_name, Predict[] predicts) {
 
   Record[] result;
   foreach (record; records) {
-    bool vaild = true;
+    bool valid = true;
     foreach (predict; predicts) {
       switch (predict.op_type) {
         case PredictOPType.eq:
           if (record.values[predict.col_index] != predict.value) {
-            vaild = false;
+            valid = false;
           }
           break;
         default:
           writeln("something is wrong.");
       }
     }
-    if (vaild) {
+    if (valid) {
       result ~= record;
     }
   }
   return result;
+}
+
+void save_records() {
+  foreach (table; tables) {
+    File f = create_file(format("%s.%s", table.schema.name, RECORD_EXTENSION));
+    foreach (record; table.records) {
+      foreach (value; record.values) {
+        f.writeln(value);
+      }
+    }
+  }
 }
 
 Record[] load_records(string table_name, Schema schema) {
