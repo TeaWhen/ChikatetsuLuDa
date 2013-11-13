@@ -160,31 +160,7 @@ void _handler(string input) {
       auto m = match(input, select_reg);
       string table_name = m.captures[1];
 
-      Predict[] predicts;
-      m = match(input, where_reg);
-      while (m.empty() == false) {
-        Predict predict;
-        string col_name = m.captures[1];
-        for (int i = 0; i < tables[table_name].schema.cols.length; i++) {
-          if (col_name == tables[table_name].schema.cols[i].name) {
-            predict.col_index = i;
-            break;
-          }
-        }
-        switch (m.captures[2]) {
-          case "=":
-            predict.op_type = PredictOPType.eq;
-            break;
-          default:
-            writeln("nop");
-        }
-        predict.value = m.captures[3];
-        predicts ~= predict;
-        m.popFront();
-      }
-      writeln(predicts);
-
-      Record[] records = select_record(table_name, predicts);
+      Record[] records = select_record(table_name, match_predicts(input, tables[table_name]));
       for (int i = 0; i < tables[table_name].schema.cols.length; i++) {
         write(tables[table_name].schema.cols[i].name, '\t');
       }
@@ -217,31 +193,8 @@ void _handler(string input) {
     if (match(input, delete_reg)) {
       auto m = match(input, delete_reg);
       string table_name = m.captures[1];
-      
-      Predict[] predicts;
-      m = match(input, where_reg);
-      while (m.empty() == false) {
-        Predict predict;
-        string col_name = m.captures[1];
-        for (int i = 0; i < tables[table_name].schema.cols.length; i++) {
-          if (col_name == tables[table_name].schema.cols[i].name) {
-            predict.col_index = i;
-            break;
-          }
-        }
-        switch (m.captures[2]) {
-          case "=":
-            predict.op_type = PredictOPType.eq;
-            break;
-          default:
-            writeln("nop");
-        }
-        predict.value = m.captures[3];
-        predicts ~= predict;
-        m.popFront();
-      }
 
-      delete_record(table_name, predicts);
+      delete_record(table_name, match_predicts(input, tables[table_name]));
       return;
     }
 
@@ -277,4 +230,30 @@ void execfile(string file_name) {
   else {
     writeln(file_name, " does not exists.");
   }
+}
+
+Predict[] match_predicts(string input, Table table) {
+  Predict[] predicts;
+  auto m = match(input, where_reg);
+  while (m.empty() == false) {
+    Predict predict;
+    string col_name = m.captures[1];
+    for (int i = 0; i < table.schema.cols.length; i++) {
+      if (col_name == table.schema.cols[i].name) {
+        predict.col_index = i;
+        break;
+      }
+    }
+    switch (m.captures[2]) {
+      case "=":
+        predict.op_type = PredictOPType.eq;
+        break;
+      default:
+        writeln("nop");
+    }
+    predict.value = m.captures[3];
+    predicts ~= predict;
+    m.popFront();
+  }
+  return predicts;
 }
