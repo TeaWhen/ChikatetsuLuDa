@@ -248,8 +248,23 @@ Predict[] match_predicts(string input, Table table) {
       case "=":
         predict.op_type = PredictOPType.eq;
         break;
+      case "<>":
+        predict.op_type = PredictOPType.neq;
+        break;
+      case "<":
+        predict.op_type = PredictOPType.lt;
+        break;
+      case ">":
+        predict.op_type = PredictOPType.gt;
+        break;
+      case "<=":
+        predict.op_type = PredictOPType.leq;
+        break;
+      case ">=":
+        predict.op_type = PredictOPType.geq;
+        break;
       default:
-        writeln("nop");
+        writeln("wrong predict op_type!");
     }
     predict.value = m.captures[3];
     predicts ~= predict;

@@ -21,21 +21,7 @@ void delete_record(string table_name, Predict[] predicts) {
   if (table_name in tables) {
     Record[] result;
     foreach (record; tables[table_name].records) {
-      bool valid = true;
-      foreach (predict; predicts) {
-        if (valid) {
-          switch (predict.op_type) {
-            case PredictOPType.eq:
-              if (record.values[predict.col_index] != predict.value) {
-                valid = false;
-              }
-              break;
-            default:
-              writeln("something is wrong.");
-          }
-        }
-      }
-      if (!valid) {
+      if (!validation(tables[table_name], record, predicts)) {
         result ~= record;
       }
     }
@@ -78,19 +64,7 @@ Record[] select_record(string table_name, Predict[] predicts) {
 
   Record[] result;
   foreach (record; records) {
-    bool valid = true;
-    foreach (predict; predicts) {
-      switch (predict.op_type) {
-        case PredictOPType.eq:
-          if (record.values[predict.col_index] != predict.value) {
-            valid = false;
-          }
-          break;
-        default:
-          writeln("something is wrong.");
-      }
-    }
-    if (valid) {
+    if (validation(tables[table_name], record, predicts)) {
       result ~= record;
     }
   }
@@ -135,4 +109,44 @@ ulong[] range(ulong start, ulong end) {
     ret ~= i;
   }
   return ret;
+}
+
+bool validation(Table table, Record record, Predict[] predicts) {
+  bool valid = true;
+  foreach (predict; predicts) {
+    if (valid) {
+      switch (predict.op_type) {
+        case PredictOPType.eq:
+          if (record.values[predict.col_index] != predict.value) {
+            valid = false;
+          }
+          break;
+        case PredictOPType.neq:
+          if (record.values[predict.col_index] == predict.value) {
+            valid = false;
+          }
+          break;
+        case PredictOPType.lt:
+          if (table.schema.cols[predict.col_index].type == ColType.CKint) {
+            if (to!int(record.values[predict.col_index]) >= to!int(predict.value)) {
+              valid = false;
+            }
+          } else if (table.schema.cols[predict.col_index].type == ColType.CKfloat) {
+            if (to!float(record.values[predict.col_index]) >= to!float(predict.value)) {
+              valid = false;
+            }
+          } else {
+            if (record.values[predict.col_index] >= predict.value) {
+              valid = false;
+            }
+          }
+          break;
+        default:
+          writeln("unknown error in API.record.validation !");
+      }
+    } else {
+      break;
+    }
+  }
+  return valid;
 }
