@@ -13,7 +13,6 @@ void load_meta() {
   foreach (line_raw; f.byLine()) {
     string line = to!string(strip(line_raw));
     if (line != "") {
-      writeln(line);
       ++table_names.length;
       table_names[table_names.length - 1] = line;
     }
