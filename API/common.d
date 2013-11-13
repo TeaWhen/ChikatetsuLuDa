@@ -1,5 +1,7 @@
 import std.string;
 
+import API.btree;
+
 Table[string] tables;
 string[] table_names;
 
@@ -13,10 +15,6 @@ struct Schema {
   string name;
   Column[] cols;
   int pk;
-}
-
-struct Index {
-  string name;
 }
 
 enum ColType { CKint, CKfloat, CKchar }
@@ -38,6 +36,13 @@ struct Predict {
   int col_index;
   PredictOPType op_type;
   string value;
+}
+
+struct Index {
+  string name;
+  string table_name;
+  ulong col_index;
+  BTree btree;
 }
 
 const bool DEBUG = false;
