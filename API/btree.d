@@ -5,6 +5,7 @@ import std.stdio;
 struct Node {
   string val;
   Node[] children;
+  int children_num;
   bool is_leaf;
   ulong[] indexes;
 }
@@ -16,6 +17,7 @@ class BTree {
   this (int type) {
     this.type = type;
     root.is_leaf = false;
+    root.children_num = 0;
   }
 
   ~this () {
@@ -29,23 +31,31 @@ class BTree {
       node.val = val;
       node.indexes ~= index;
       root.children ~= node;
+      root.children_num += 1;
+      if (root.children_num == root.children.length) {
+        root.children.length = root.children.length * 2;
+      }
     } else {
       _insert(val, index, root);
     }
   }
 
   void _insert (string val, ulong index, ref Node node) {
-    for (ulong i = node.children.length - 1; ; i--) {
+    if (root.children_num == root.children.length) {
+      root.children.length = root.children.length * 2;
+    }
+    for (ulong i = node.children_num - 1; ; i--) {
       if (node.children[i].is_leaf) {
         if (node.children[i].val == val) {
           node.children[i].indexes ~= index;
           return;
-        } else if (bigger(val, node.children[i].val) && i == node.children.length - 1) {
+        } else if (bigger(val, node.children[i].val) && i == node.children_num - 1) {
           Node n;
           n.is_leaf = true;
           n.val = val;
           n.indexes ~= index;
-          node.children ~= n;
+          node.children[root.children_num] = n;
+          root.children_num += 1;
         } else if (bigger(val, node.children[i].val)) {
           Node n;
           n.is_leaf = true;
@@ -54,8 +64,9 @@ class BTree {
           Node[] t;
           t ~= node.children[0..i];
           t ~= n;
-          t ~= node.children[i+1..node.children.length];
+          t ~= node.children[i..node.children.length];
           node.children = t;
+          root.children_num += 1;
           return;
         }
       } else {
@@ -80,6 +91,7 @@ class BTree {
     t ~= n;
     t ~= node.children;
     node.children = t;
+    root.children_num += 1;
   }
 
   void remove (string val, ulong index) {
@@ -113,7 +125,10 @@ class BTree {
       case 0:
         int a = to!int(val1);
         int b = to!int(val2);
-        return a < b;
+        if (a < b)
+          return true;
+        else
+          return false;
       default:
         return false;
     }
@@ -124,9 +139,6 @@ class BTree {
       case 0:
         int a = to!int(val1);
         int b = to!int(val2);
-        writeln(a);
-        writeln(b);
-        writeln(a > b);
         if (a > b)
           return true;
         else

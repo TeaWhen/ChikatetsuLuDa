@@ -16,7 +16,8 @@ void create_index(string name, string table_name, string col_name) {
   }
   BTree btree = new BTree(0);
   for (ulong i = 0; i < tables[table_name].records.length; i++) {
-    writeln(i);
+    if (i % 100 == 0)
+      writeln(i);
     btree.insert(tables[table_name].records[i].values[index.col_index], i);
   }
   btree.print();

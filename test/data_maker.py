@@ -3,7 +3,7 @@ import string
 
 def make_insert_data():
     f = open('insert_big.sql', 'w')
-    for i in range(10000):
+    for i in range(1000000):
         f.write("insert into student values ({}, '{}');\n".format(i, randomword(20)))
 
 def randomword(length):
