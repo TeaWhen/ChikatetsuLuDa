@@ -29,7 +29,39 @@ void delete_record(string table_name) {
 
 Record[] select_record(string table_name, Predict[] predicts) {
   writeln("selecting * from ", table_name);
-  Record[] records = tables[table_name].records;
+
+  ulong[] indexes = range(0, tables[table_name].records.length);
+  Predict[] predicts_t;
+  foreach (predict; predicts) {
+    bool is_indexed = false;
+    for (ulong i = 0; i < tables[table_name].indexes.length; i++) {
+      if (tables[table_name].indexes[i].col_index == predict.col_index) {
+        is_indexed = true;
+        writeln(predict.value);
+        ulong[] indexes_raw = tables[table_name].indexes[i].btree.find(predict.value);
+        writeln(indexes_raw);
+        ulong[] indexes_t;
+        for (ulong j = 0; j < indexes.length; j++) {
+          for (ulong k = 0; k < indexes_raw.length; k++) {
+            if (indexes[j] == indexes_t[k]) {
+              indexes_t ~= indexes[j];
+            }
+          }
+        }
+        indexes = indexes_t;
+      }
+    }
+    if (!is_indexed) {
+      predicts_t ~= predict;
+    }
+  }
+
+  Record[] records;
+  for (int i = 0; i < indexes.length; i++) {
+    records ~= tables[table_name].records[indexes[i]];
+  }
+  predicts = predicts_t;
+
   Record[] result;
   foreach (record; records) {
     bool vaild = true;
@@ -70,4 +102,12 @@ Record[] load_records(string table_name, Schema schema) {
     }
   }
   return records;
+}
+
+ulong[] range(ulong start, ulong end) {
+  ulong[] ret;
+  for (ulong i = start; i < end; i++) {
+    ret ~= i;
+  }
+  return ret;
 }

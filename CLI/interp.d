@@ -25,7 +25,7 @@ auto column_reg = regex(r"([a-z]+) ([a-z]+)(?: \(([0-9]+)\))?( unique)?,",  "g")
 auto primary_key_reg = regex(r"primary key \( ([a-z]+) \)");
 auto values_reg_raw = regex(r"\([\w\d', ]+\)");
 auto values_reg = regex(r"'?([\w\d]+)'?", "g");
-auto where_reg = regex(r"([\w]+) ?([=><]) ?([\d]+)", "g");
+auto where_reg = regex(r"([\w]+) ?([=><]) ?'?([\d\w]+)'?", "g");
 // need to support space
 
 void handler() {
@@ -182,6 +182,7 @@ void _handler(string input) {
         predicts ~= predict;
         m.popFront();
       }
+      writeln(predicts);
 
       Record[] records = select_record(table_name, predicts);
       for (int i = 0; i < tables[table_name].schema.cols.length; i++) {

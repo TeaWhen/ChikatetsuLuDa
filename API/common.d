@@ -33,7 +33,7 @@ struct Record {
 enum PredictOPType { eq, neq, lt, gt, leq, geq }
 
 struct Predict {
-  int col_index;
+  ulong col_index;
   PredictOPType op_type;
   string value;
 }
