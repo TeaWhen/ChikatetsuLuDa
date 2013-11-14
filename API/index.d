@@ -26,7 +26,17 @@ void create_index(string name, string table_name, string col_name) {
 }
 
 void drop_index(string index_name) {
-  writeln(index_name);
+  foreach (table; tables) {
+    Index[] result_indexes;
+    foreach (index; table.indexes) {
+      if (index.name != index_name) {
+        result_indexes ~= index;
+      }
+    }
+    table.indexes = result_indexes;
+  }
+  // need delete related index file
+
 }
 
 Index[] load_indexes(string table_name) {
