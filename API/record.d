@@ -10,7 +10,26 @@ void insert_record(string table_name, string[] values) {
     // TODO: type checking...
     Record record;
     record.values = values;
-    tables[table_name].records ~= record;
+
+    bool is_inserted = false;
+    ulong index = 0;
+    foreach (ref block; tables[table_name].blocks){
+      if (block.size < tables[table_name].block_size) {
+        load_block(table_name, index);
+        block.records ~= record;
+        is_inserted = true;
+        break;
+      }
+      index += 1;
+    }
+    if (!is_inserted) {
+      Block block;
+      block.records ~= record;
+      block.size += 1;
+      block.loaded = true;
+      tables[table_name].blocks ~= block;
+      writeln(block);
+    }
   }
   else {
     writeln(table_name, " doesn't exist.");
@@ -19,20 +38,20 @@ void insert_record(string table_name, string[] values) {
 
 void delete_record(string table_name, Predict[] predicts) {
   if (table_name in tables) {
-    Record[] result;
-    foreach (record; tables[table_name].records) {
-      if (!validation(tables[table_name], record, predicts)) {
-        result ~= record;
+    foreach (ref block; tables[table_name].blocks) {
+      Record[] result;
+      foreach (record; block.records) {
+        if (!validation(tables[table_name], record, predicts)) {
+          result ~= record;
+        }
       }
+      block.records = result;
     }
-    tables[table_name].records = result;
   }
 }
 
 Record[] select_record(string table_name, Predict[] predicts) {
-  writeln("selecting * from ", table_name);
-
-  ulong[] indexes = range(0, tables[table_name].records.length);
+  ulong[] block_indexes = range(0, tables[table_name].blocks.length);
   Predict[] predicts_t;
   foreach (predict; predicts) {
     bool is_indexed = false;
@@ -41,14 +60,14 @@ Record[] select_record(string table_name, Predict[] predicts) {
         is_indexed = true;
         ulong[] indexes_raw = tables[table_name].indexes[i].btree.find(predict.value);
         ulong[] indexes_t;
-        for (ulong j = 0; j < indexes.length; j++) {
+        for (ulong j = 0; j < block_indexes.length; j++) {
           for (ulong k = 0; k < indexes_raw.length; k++) {
-            if (indexes[j] == indexes_raw[k]) {
-              indexes_t ~= indexes[j];
+            if (block_indexes[j] == indexes_raw[k]) {
+              indexes_t ~= block_indexes[j];
             }
           }
         }
-        indexes = indexes_t;
+        block_indexes = indexes_t;
       }
     }
     if (!is_indexed) {
@@ -57,8 +76,8 @@ Record[] select_record(string table_name, Predict[] predicts) {
   }
 
   Record[] records;
-  for (int i = 0; i < indexes.length; i++) {
-    records ~= tables[table_name].records[indexes[i]];
+  for (int i = 0; i < block_indexes.length; i++) {
+    records ~= tables[table_name].blocks[i].records;
   }
   predicts = predicts_t;
 
@@ -72,11 +91,24 @@ Record[] select_record(string table_name, Predict[] predicts) {
 }
 
 void save_records() {
+  writeln("save_records");
   foreach (table; tables) {
-    File f = create_file(format("%s.%s", table.schema.name, RECORD_EXTENSION));
-    foreach (record; table.records) {
-      foreach (value; record.values) {
-        f.writeln(value);
+    File f = write_file_binary(format("%s.%s", table.schema.name, RECORD_EXTENSION));
+    foreach (block; table.blocks) {
+      writeln(block);
+      for (int i = 0; i < 128; i++) {
+        Record record;
+        // if (i >= block.size) {
+          record = block.records[0];
+        //} else {
+        //  record = block.records[i];
+        //}
+        foreach (value; record.values) {
+          foreach (ch; value) {
+            char raw = to!char(ch);
+            f.write(raw);
+          }
+        }
       }
     }
   }
@@ -91,7 +123,7 @@ Record[] load_records(string table_name, Schema schema) {
   string[] values;
   foreach (line; f.byLine()) {
     counter++;
-    values ~= to!string(strip(line));
+    values ~= to!(string)(strip(line));
     if (counter == length) {
       Record record;
       record.values = values;

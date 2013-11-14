@@ -8,13 +8,15 @@ string[] table_names;
 struct Table {
   Schema schema;
   Index[] indexes;
-  Record[] records;
+  Block[] blocks;
+  ulong block_size = 128;
 }
 
 struct Schema {
   string name;
   Column[] cols;
   int pk;
+  ulong size;
 }
 
 enum ColType { CKint, CKfloat, CKchar }
@@ -25,6 +27,12 @@ struct Column {
   int size;
   bool is_unique;
 }
+
+struct Block {
+  Record[] records;
+  bool loaded;
+  ulong size;
+};
 
 struct Record {
   string[] values;

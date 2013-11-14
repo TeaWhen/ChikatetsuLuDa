@@ -24,7 +24,7 @@ void load_tables() {
     Table table;
     table.schema = load_schema(table_name);
     table.indexes = load_indexes(table_name);
-    table.records = load_records(table_name, table.schema);
+    // TODO load blocks?
     tables[table_name] = table;
   }
 }

@@ -6,11 +6,14 @@ import API.common;
 import CFI.buffer;
 
 Schema load_schema(string name) {
+  writeln("load_schema");
   Schema schema;
   string file_name = format("%s.%s", name, SCHEMA_EXTENSION);
   auto f = load_file(file_name);
   schema.name = strip(f.readln());
 
+  ulong size = to!ulong(strip(f.readln()));
+  schema.size = size;
   int length = to!int(strip(f.readln()));
   Column[] cols;
   cols.length = length;
@@ -24,13 +27,16 @@ Schema load_schema(string name) {
   }
   schema.cols = cols;
   schema.pk = to!int(strip(f.readln()));
+  writeln(schema);
   return schema;
 }
 
 void save_schema(string name, Schema schema) {
+  writeln("save_schema");
   string file_name = format("%s.%s", name, SCHEMA_EXTENSION);
   auto f = create_file(file_name);
   f.writeln(schema.name);
+  f.writeln(schema.size);
   f.writeln(schema.cols.length);
   for (int i = 0; i < schema.cols.length; i++) {
     Column col = schema.cols[i];
