@@ -4,7 +4,7 @@ import std.string;
 
 import API.common;
 import API.schema;
-import CFI.buffer;
+import CFI.file;
 import API.index;
 import API.record;
 

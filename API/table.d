@@ -3,7 +3,7 @@ import std.stdio;
 
 import API.schema;
 import API.index;
-import CFI.buffer;
+import CFI.file;
 import API.common;
 import API.index;
 import API.meta;
