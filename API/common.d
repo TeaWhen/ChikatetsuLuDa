@@ -18,13 +18,14 @@ struct Schema {
   uint size;
 }
 
-enum ColType { CKint, CKfloat, CKchar }
+enum ColType { CKint = 0, CKchar = 1, CKfloat = 2 }
 
 struct Column {
   string name;
   ColType type;
   int size;
   bool is_unique;
+  ulong total;
 }
 
 struct Record {

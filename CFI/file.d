@@ -14,13 +14,13 @@ File load_file(string filename) {
   if (!exists(path)) {
     std.file.write(path, "");
   }
-  return File(path, "r");
+  return File(path, "rb");
 }
 
 File create_file(string filename) {
   _init();
   string path = format("%s/%s", BASE_PATH, filename);
-  return File(path, "w");
+  return File(path, "wb");
 }
 
 int delete_file(string filename) {

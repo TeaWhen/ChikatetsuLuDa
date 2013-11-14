@@ -29,7 +29,8 @@ void load_tables() {
     foreach (index_name; index_name_list) {
       table.indexes = load_indexes(index_name, table_name);
     }
-    table.records = load_records(table_name, table.schema);
     tables[table_name] = table;
+    load_records(table_name, table.schema, tables[table_name]);
+    writeln(tables[table_name]);
   }
 }

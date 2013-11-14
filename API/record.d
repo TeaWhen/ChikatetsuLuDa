@@ -74,6 +74,7 @@ Record[] select_record(string table_name, Predict[] predicts) {
 }
 
 void save_records() {
+  writeln("save_records");
   foreach (table; tables) {
     uint num_records_in_block = BLOCK_SIZE / table.schema.size;
     uint num_blocks = cast(uint)ceil(cast(real)table.records.length / num_records_in_block);
@@ -85,8 +86,29 @@ void save_records() {
         if (record_id >= table.records.length) {
           break;
         }
+        ulong counter = 0;
         foreach (value; table.records[record_id].values) {
-          content ~= value ~ "\n";
+          writeln(value);
+          switch (table.schema.cols[counter].type) {
+            case ColType.CKint:
+              writeln("int");
+              content ~= to!char(to!int(value));
+              break;
+            case ColType.CKchar:
+              writeln("char");
+              content ~= value;
+              for (int t = 0; t < table.schema.cols[counter].size - value.length; t++) {
+                content ~= '|';
+              }
+              break;
+            case ColType.CKfloat:
+              writeln("float");
+              content ~= to!char(to!float(value));
+              break;
+            default:
+              assert(0);
+          }
+          counter += 1;
         }
       }
       write_block(table.schema.name, block_i, content);
@@ -94,25 +116,76 @@ void save_records() {
   }
 }
 
-Record[] load_records(string table_name, Schema schema) {
-  Record[] records;
-  string file_name = format("%s.%s", table_name, RECORD_EXTENSION);
-  auto f = load_file(file_name);
-  int counter = 0;
-  auto length = schema.cols.length;
-  string[] values;
-  foreach (line; f.byLine()) {
-    counter++;
-    values ~= to!(string)(strip(line));
-    if (counter == length) {
+void load_records(string table_name, Schema schema, ref Table table) {
+  writeln("load_records");
+
+  ulong num_records_in_block = BLOCK_SIZE / table.schema.size;
+
+  ulong block = 0;
+  bool eof = false;
+  ubyte[] content = load_block(table.schema.name, block, eof);
+  if (eof) {
+    return;
+  }
+  while (content.length == BLOCK_SIZE) {
+    ulong current = 0;
+    for (ulong record_i = 0; record_i < num_records_in_block; ++record_i) {
+      ulong record_id = block * num_records_in_block + record_i;
+      while (record_id < table.records.length) {
+        Record record;
+        table.records ~= record;
+      }
+
+      string[] values;
+      for (ulong counter = 0; counter < table.schema.cols.length; counter++) {
+        writeln(counter);
+        switch (table.schema.cols[counter].type) {
+          case ColType.CKint:
+            writeln("int");
+            if (content[current] == 124) {
+              return;
+            }
+            string val = to!string(to!int(content[current]));
+            current += 1;
+            values ~= val;
+            break;
+          case ColType.CKchar:
+            writeln("char");
+            string value;
+            for (int i = 0; i < table.schema.cols[counter].size; i++) {
+              string val = to!string(to!char(content[current+i]));
+              writeln(val);
+              if (val == "|")
+                break;
+              value ~= val;
+            }
+            if (value.length == 0) {
+              return;
+            }
+            current += table.schema.cols[counter].size;
+            values ~= value;
+            break;
+          case ColType.CKfloat:
+            writeln("float");
+            // TODO
+            break;
+          default:
+            assert(0);
+        }
+      }
+      writeln(values);
+
       Record record;
       record.values = values;
-      records ~= record;
-      counter = 0;
-      values.length = 0;
+      table.records ~= record;
+    }
+
+    block += 1;
+    content = load_block(table.schema.name, block, eof);
+    if (eof) {
+      break;
     }
   }
-  return records;
 }
 
 uint[] range(uint start, uint end) {
