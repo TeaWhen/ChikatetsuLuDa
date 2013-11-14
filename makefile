@@ -16,7 +16,7 @@ $(PROGRAM): $(OBJS)
 rebuild: clean all
 
 clean:
-	rm -f *.o */*.o $(PROGRAM)
+	rm -f *.o */*.o data/* $(PROGRAM)
 
 # debug use only
 show:
