@@ -15,6 +15,7 @@ struct Schema {
   string name;
   Column[] cols;
   int pk;
+  ulong size;
 }
 
 enum ColType { CKint, CKfloat, CKchar }

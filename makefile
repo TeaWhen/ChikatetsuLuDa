@@ -13,6 +13,9 @@ $(PROGRAM): $(OBJS)
 %.o: %.d
 	$(DCC) $(DFLAGS) -c $< -of$*.o
 
+run: all
+	./$(PROGRAM)
+
 rebuild: clean all
 
 clean:

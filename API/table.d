@@ -9,21 +9,30 @@ import API.index;
 import API.meta;
 
 void create_table(string name, Column[] cols, int pk) {
-  if (DEBUG) {
-    writeln(name);
-    for (int i = 0; i < cols.length; i++) {
-      Column col = cols[i];
-      writeln(col.name, " ", col.type, " ", col.size, " ", col.is_unique);
-    }
-    writeln(pk);
-  }
-
   auto f = append_file(META_FILE_NAME);
   f.writeln(name);
 
   Table table;
   table.schema.name = name;
   table.schema.cols = cols;
+
+  table.schema.size = 0;
+  foreach (col; table.schema.cols) {
+    switch (col.type) {
+      case ColType.CKint:
+        table.schema.size += int.sizeof;
+        break;
+      case ColType.CKfloat:
+        table.schema.size += float.sizeof;
+        break;
+      case ColType.CKchar:
+        table.schema.size += char.sizeof * col.size;
+        break;
+      default:
+        writeln("error");
+    }
+  }
+  writeln(table.schema.size);
   table.schema.pk = pk;
   tables[name] = table;
 
@@ -38,6 +47,9 @@ void drop_table(string name) {
     writeln("table doesn't exist.");
   }
   else {
+    drop_schema(name);
+    // TODO drop all indexes
+    drop_index(name);
     delete_file(META_FILE_NAME);
     auto f = create_file(META_FILE_NAME);
     for (int i = 0; i < table_names.length; i++) {
@@ -49,7 +61,5 @@ void drop_table(string name) {
       }
     }
     load_meta();
-    drop_schema(name);
-    drop_index(name);
   }
 }

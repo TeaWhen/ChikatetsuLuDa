@@ -1,6 +1,7 @@
 import std.string;
 import std.stdio;
 import std.conv;
+import std.math;
 
 import API.common;
 import CFI.buffer;
@@ -74,11 +75,21 @@ Record[] select_record(string table_name, Predict[] predicts) {
 
 void save_records() {
   foreach (table; tables) {
-    File f = create_block(format("%s.%s", table.schema.name, RECORD_EXTENSION));
-    foreach (record; table.records) {
-      foreach (value; record.values) {
-        f.writeln(value);
+    ulong num_records_in_block = BLOCK_SIZE / table.schema.size;
+    ulong num_blocks = cast(ulong)ceil(cast(real)table.records.length / num_records_in_block);
+
+    for (ulong block_i = 0; block_i < num_blocks; ++block_i) {
+      string content;
+      for (ulong record_i = 0; record_i < num_records_in_block; ++record_i) {
+        ulong record_id = block_i * num_records_in_block + record_i;
+        if (record_id >= table.records.length) {
+          break;
+        }
+        foreach (value; table.records[record_id].values) {
+          content ~= value ~ "\n";
+        }
       }
+      write_block(table.schema.name, block_i, content);
     }
   }
 }
@@ -92,7 +103,7 @@ Record[] load_records(string table_name, Schema schema) {
   string[] values;
   foreach (line; f.byLine()) {
     counter++;
-    values ~= to!string(strip(line));
+    values ~= to!(string)(strip(line));
     if (counter == length) {
       Record record;
       record.values = values;
