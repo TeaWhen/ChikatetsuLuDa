@@ -75,7 +75,7 @@ void save_indexes(string name, string table_name) {
       f.writeln(index.table_name);
       f.writeln(index.col_index);
       // Save Index
-      f.writeln(index.to_string());
+      f.writeln(index.btree.to_string());
       break;
     }
   }

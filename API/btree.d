@@ -259,7 +259,8 @@ class BTree {
   }
 
   string to_string() {
-    
+    string ret;
+    return ret;
   }
 
 }
