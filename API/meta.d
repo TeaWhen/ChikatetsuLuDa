@@ -23,7 +23,12 @@ void load_tables() {
   foreach (table_name; table_names) {
     Table table;
     table.schema = load_schema(table_name);
-    table.indexes = load_indexes(table_name);
+    string file_name = format("%s.%s", table_name, INDEX_EXTENSION);
+    string[] index_name_list = load_index_list(table_name);
+    writeln(index_name_list);
+    foreach (index_name; index_name_list) {
+      table.indexes = load_indexes(index_name, table_name);
+    }
     table.records = load_records(table_name, table.schema);
     tables[table_name] = table;
   }
