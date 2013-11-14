@@ -258,4 +258,8 @@ class BTree {
     }
   }
 
+  string to_string() {
+    
+  }
+
 }

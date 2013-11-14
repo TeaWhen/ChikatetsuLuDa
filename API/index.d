@@ -17,7 +17,21 @@ void create_index(string name, string table_name, string col_name) {
       break;
     }
   }
-  BTree btree = new BTree(0);
+  int type = 0;
+  switch (tables[table_name].schema.cols[index.col_index].type) {
+    case ColType.CKint:
+      type = 0;
+      break;
+    case ColType.CKchar:
+      type = 1;
+      break;
+    case ColType.CKfloat:
+      type = 2;
+      break;
+    default:
+      type = 1;
+  }
+  BTree btree = new BTree(type);
   for (ulong i = 0; i < tables[table_name].records.length; i++) {
     if (i % 100 == 0)
       writeln(i);
@@ -35,17 +49,21 @@ void create_index(string name, string table_name, string col_name) {
 }
 
 void drop_index(string index_name) {
+  string table_name;
   foreach (table; tables) {
     Index[] result_indexes;
     foreach (index; table.indexes) {
       if (index.name != index_name) {
         result_indexes ~= index;
+      } else {
+        table_name = table.schema.name;
       }
     }
     table.indexes = result_indexes;
   }
-  // need delete related index file
 
+  string file_name = format("%s_%s.%s", table_name, index_name, INDEX_EXTENSION);
+  delete_file(file_name);
 }
 
 void save_indexes(string name, string table_name) {
@@ -53,8 +71,11 @@ void save_indexes(string name, string table_name) {
   auto f = create_file(file_name);
   foreach (index; tables[table_name].indexes) {
     if (index.name == name) {
-      // TODO
-      f.writeln(index);
+      f.writeln(index.name);
+      f.writeln(index.table_name);
+      f.writeln(index.col_index);
+      // Save Index
+      f.writeln(index.to_string());
       break;
     }
   }
