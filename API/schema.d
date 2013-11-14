@@ -3,7 +3,7 @@ import std.stdio;
 import std.conv;
 
 import API.common;
-import CFI.buffer;
+import CFI.file;
 
 Schema load_schema(string name) {
   Schema schema;

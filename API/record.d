@@ -4,6 +4,7 @@ import std.conv;
 
 import API.common;
 import CFI.buffer;
+import CFI.file;
 
 void insert_record(string table_name, string[] values) {
   if (table_name in tables) {
@@ -73,7 +74,7 @@ Record[] select_record(string table_name, Predict[] predicts) {
 
 void save_records() {
   foreach (table; tables) {
-    File f = create_file(format("%s.%s", table.schema.name, RECORD_EXTENSION));
+    File f = create_block(format("%s.%s", table.schema.name, RECORD_EXTENSION));
     foreach (record; table.records) {
       foreach (value; record.values) {
         f.writeln(value);
