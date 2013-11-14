@@ -5,6 +5,7 @@ import std.conv;
 import API.common;
 import API.btree;
 import CFI.buffer;
+import CFI.file;
 
 void create_index(string name, string table_name, string col_name) {
   Index index;
