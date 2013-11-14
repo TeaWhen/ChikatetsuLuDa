@@ -9,6 +9,10 @@ struct Node {
   ulong[] indexes;
 }
 
+//  0 for int
+//  1 for char
+//  2 for float
+
 class BTree {
   Node root;
   int type;
@@ -204,6 +208,18 @@ class BTree {
           return true;
         else
           return false;
+      case 1:
+        if (val1 < val2)
+          return true;
+        else
+          return false;
+      case 2:
+        float a = to!float(val1);
+        float b = to!float(val2);
+        if (a < b)
+          return true;
+        else
+          return false;
       default:
         return false;
     }
@@ -214,12 +230,22 @@ class BTree {
       case 0:
         int a = to!int(val1);
         int b = to!int(val2);
-        if (a > b) {
+        if (a > b)
           return true;
-        }
-        else {
+        else
           return false;
-        }
+      case 1:
+        if (val1 > val2)
+          return true;
+        else
+          return false;
+      case 2:
+        float a = to!float(val1);
+        float b = to!float(val2);
+        if (a > b)
+          return true;
+        else
+          return false;
       default:
         return false;
     }
