@@ -1,6 +1,6 @@
 PROGRAM = chikatetsu
 DCC = dmd
-DFLAGS = -w -O
+DFLAGS = -m32 -w -O $(shell pwd)/orange/lib/32/liborange.a -I$(shell pwd)/orange
 SRCDIRS = . API CFI CLI
 SRCS = $(foreach dir, $(SRCDIRS), $(wildcard $(dir)/*.d))
 OBJS = $(SRCS:.d=.o)
