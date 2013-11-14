@@ -86,7 +86,7 @@ void save_records() {
         if (record_id >= table.records.length) {
           break;
         }
-        ulong counter = 0;
+        uint counter = 0;
         foreach (value; table.records[record_id].values) {
           writeln(value);
           switch (table.schema.cols[counter].type) {
@@ -119,25 +119,25 @@ void save_records() {
 void load_records(string table_name, Schema schema, ref Table table) {
   writeln("load_records");
 
-  ulong num_records_in_block = BLOCK_SIZE / table.schema.size;
+  uint num_records_in_block = BLOCK_SIZE / table.schema.size;
 
-  ulong block = 0;
+  uint block = 0;
   bool eof = false;
   ubyte[] content = load_block(table.schema.name, block, eof);
   if (eof) {
     return;
   }
   while (content.length == BLOCK_SIZE) {
-    ulong current = 0;
-    for (ulong record_i = 0; record_i < num_records_in_block; ++record_i) {
-      ulong record_id = block * num_records_in_block + record_i;
+    uint current = 0;
+    for (uint record_i = 0; record_i < num_records_in_block; ++record_i) {
+      uint record_id = block * num_records_in_block + record_i;
       while (record_id < table.records.length) {
         Record record;
         table.records ~= record;
       }
 
       string[] values;
-      for (ulong counter = 0; counter < table.schema.cols.length; counter++) {
+      for (uint counter = 0; counter < table.schema.cols.length; counter++) {
         writeln(counter);
         switch (table.schema.cols[counter].type) {
           case ColType.CKint:
