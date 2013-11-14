@@ -34,17 +34,17 @@ void delete_record(string table_name, Predict[] predicts) {
 Record[] select_record(string table_name, Predict[] predicts) {
   writeln("selecting * from ", table_name);
 
-  ulong[] indexes = range(0, tables[table_name].records.length);
+  uint[] indexes = range(0, tables[table_name].records.length);
   Predict[] predicts_t;
   foreach (predict; predicts) {
     bool is_indexed = false;
-    for (ulong i = 0; i < tables[table_name].indexes.length; i++) {
+    for (uint i = 0; i < tables[table_name].indexes.length; i++) {
       if (tables[table_name].indexes[i].col_index == predict.col_index) {
         is_indexed = true;
-        ulong[] indexes_raw = tables[table_name].indexes[i].btree.find(predict.value);
-        ulong[] indexes_t;
-        for (ulong j = 0; j < indexes.length; j++) {
-          for (ulong k = 0; k < indexes_raw.length; k++) {
+        uint[] indexes_raw = tables[table_name].indexes[i].btree.find(predict.value);
+        uint[] indexes_t;
+        for (uint j = 0; j < indexes.length; j++) {
+          for (uint k = 0; k < indexes_raw.length; k++) {
             if (indexes[j] == indexes_raw[k]) {
               indexes_t ~= indexes[j];
             }
@@ -75,13 +75,13 @@ Record[] select_record(string table_name, Predict[] predicts) {
 
 void save_records() {
   foreach (table; tables) {
-    ulong num_records_in_block = BLOCK_SIZE / table.schema.size;
-    ulong num_blocks = cast(ulong)ceil(cast(real)table.records.length / num_records_in_block);
+    uint num_records_in_block = BLOCK_SIZE / table.schema.size;
+    uint num_blocks = cast(uint)ceil(cast(real)table.records.length / num_records_in_block);
 
-    for (ulong block_i = 0; block_i < num_blocks; ++block_i) {
+    for (uint block_i = 0; block_i < num_blocks; ++block_i) {
       string content;
-      for (ulong record_i = 0; record_i < num_records_in_block; ++record_i) {
-        ulong record_id = block_i * num_records_in_block + record_i;
+      for (uint record_i = 0; record_i < num_records_in_block; ++record_i) {
+        uint record_id = block_i * num_records_in_block + record_i;
         if (record_id >= table.records.length) {
           break;
         }
@@ -115,9 +115,9 @@ Record[] load_records(string table_name, Schema schema) {
   return records;
 }
 
-ulong[] range(ulong start, ulong end) {
-  ulong[] ret;
-  for (ulong i = start; i < end; i++) {
+uint[] range(uint start, uint end) {
+  uint[] ret;
+  for (uint i = start; i < end; i++) {
     ret ~= i;
   }
   return ret;

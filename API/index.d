@@ -11,7 +11,7 @@ void create_index(string name, string table_name, string col_name) {
   Index index;
   index.name = name;
   index.table_name = table_name;
-  for (ulong i = 0; i < tables[table_name].schema.cols.length; i++) {
+  for (uint i = 0; i < tables[table_name].schema.cols.length; i++) {
     if (col_name == tables[table_name].schema.cols[i].name) {
       index.col_index = i;
       break;
@@ -32,7 +32,7 @@ void create_index(string name, string table_name, string col_name) {
       type = 1;
   }
   BTree btree = new BTree(type);
-  for (ulong i = 0; i < tables[table_name].records.length; i++) {
+  for (uint i = 0; i < tables[table_name].records.length; i++) {
     if (i % 100 == 0)
       writeln(i);
     btree.insert(tables[table_name].records[i].values[index.col_index], i);

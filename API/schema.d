@@ -12,7 +12,7 @@ Schema load_schema(string name) {
   auto f = load_file(file_name);
   schema.name = strip(f.readln());
 
-  ulong size = to!ulong(strip(f.readln()));
+  uint size = to!uint(strip(f.readln()));
   schema.size = size;
   int length = to!int(strip(f.readln()));
   Column[] cols;

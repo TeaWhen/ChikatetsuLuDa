@@ -15,7 +15,7 @@ struct Schema {
   string name;
   Column[] cols;
   int pk;
-  ulong size;
+  uint size;
 }
 
 enum ColType { CKint, CKfloat, CKchar }
@@ -34,7 +34,7 @@ struct Record {
 enum PredictOPType { eq, neq, lt, gt, leq, geq }
 
 struct Predict {
-  ulong col_index;
+  uint col_index;
   PredictOPType op_type;
   string value;
 }
@@ -42,7 +42,7 @@ struct Predict {
 struct Index {
   string name;
   string table_name;
-  ulong col_index;
+  uint col_index;
   BTree btree;
 }
 

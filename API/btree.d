@@ -9,7 +9,7 @@ struct Node {
   string val;
   Node[] children;
   bool is_leaf;
-  ulong[] indexes;
+  uint[] indexes;
 }
 
 //  0 for int
@@ -29,7 +29,7 @@ class BTree {
 
   }
 
-  void insert (string val, ulong index) {
+  void insert (string val, uint index) {
     if (root.children.length == 0) {
       Node node;
       node.is_leaf = true;
@@ -41,9 +41,9 @@ class BTree {
     }
   }
 
-  void _insert (string val, ulong index, ref Node node) {
-    ulong child_index;
-    for (ulong left = 0, right = node.children.length - 1; left != right; ) {
+  void _insert (string val, uint index, ref Node node) {
+    uint child_index;
+    for (uint left = 0, right = node.children.length - 1; left != right; ) {
       if (less(val, node.children[left].val)) {
         child_index = left;
         break;
@@ -60,7 +60,7 @@ class BTree {
         child_index = right;
         break;
       }
-      ulong mid = (left + right) / 2;
+      uint mid = (left + right) / 2;
       if (bigger(val, node.children[mid].val)) {
         left = mid;
       } else if (less(val, node.children[mid].val)) {
@@ -96,14 +96,14 @@ class BTree {
     writeln(root);
   }
 
-  void remove (string val, ulong index) {
+  void remove (string val, uint index) {
     _remove(val, index, root);
   }
 
-  void _remove (string val, ulong index, ref Node node) {
+  void _remove (string val, uint index, ref Node node) {
     writeln("_remove");
-    ulong child_index;
-    for (ulong left = 0, right = node.children.length - 1; left != right; ) {
+    uint child_index;
+    for (uint left = 0, right = node.children.length - 1; left != right; ) {
       if (less(val, node.children[left].val)) {
         child_index = left;
         break;
@@ -120,7 +120,7 @@ class BTree {
         child_index = right;
         break;
       }
-      ulong mid = (left + right) / 2;
+      uint mid = (left + right) / 2;
       if (bigger(val, node.children[mid].val)) {
         left = mid;
       } else if (less(val, node.children[mid].val)) {
@@ -139,7 +139,7 @@ class BTree {
       writeln("inside");
       for (int i = 0; i < node.children[child_index].indexes.length; i++) {
         if (node.children[child_index].indexes[i] == index) {
-          ulong[] indexes;
+          uint[] indexes;
           indexes ~= node.children[child_index].indexes[0..i];
           indexes ~= node.children[child_index].indexes[i+1..node.children[child_index].indexes.length];
           node.children[child_index].indexes = indexes;
@@ -155,15 +155,15 @@ class BTree {
     }
   }
 
-  ulong[] find (string val) {
-    ulong[] result = _find(val, root);
+  uint[] find (string val) {
+    uint[] result = _find(val, root);
     return result;
   }
 
-  ulong[] _find(string val, Node node) {
-    ulong[] result;
-    ulong child_index;
-    for (ulong left = 0, right = node.children.length - 1; left != right; ) {
+  uint[] _find(string val, Node node) {
+    uint[] result;
+    uint child_index;
+    for (uint left = 0, right = node.children.length - 1; left != right; ) {
       if (less(val, node.children[left].val)) {
         child_index = left;
         break;
@@ -180,7 +180,7 @@ class BTree {
         child_index = right;
         break;
       }
-      ulong mid = (left + right) / 2;
+      uint mid = (left + right) / 2;
       if (bigger(val, node.children[mid].val)) {
         left = mid;
       } else if (less(val, node.children[mid].val)) {
