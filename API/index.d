@@ -2,6 +2,9 @@ import std.string;
 import std.stdio;
 import std.conv;
 
+import orange.serialization._;
+import orange.serialization.archives._;
+
 import API.common;
 import API.btree;
 import CFI.buffer;
@@ -75,7 +78,9 @@ void save_indexes(string name, string table_name) {
       f.writeln(index.table_name);
       f.writeln(index.col_index);
       // Save Index
-      f.writeln(index.btree.to_string());
+      auto archive = new XmlArchive!(char);
+      auto serializer = new Serializer(archive);
+      // f.writeln(to!string(archive.untypedData));
       break;
     }
   }
