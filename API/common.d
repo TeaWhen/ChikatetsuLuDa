@@ -30,6 +30,7 @@ struct Column {
 
 struct Record {
   string[] values;
+  bool deleted;
 }
 
 enum PredictOPType { eq, neq, lt, gt, leq, geq }

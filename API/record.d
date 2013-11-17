@@ -12,6 +12,7 @@ void insert_record(string table_name, string[] values) {
     // TODO: type checking...
     Record record;
     record.values = values;
+    record.deleted = false;
     tables[table_name].records ~= record;
   }
   else {
@@ -22,12 +23,21 @@ void insert_record(string table_name, string[] values) {
 void delete_record(string table_name, Predict[] predicts) {
   if (table_name in tables) {
     Record[] result;
+    int counter = 0;
     foreach (record; tables[table_name].records) {
       if (!validation(tables[table_name], record, predicts)) {
-        result ~= record;
+        // result ~= record;
+      } else {
+        tables[table_name].records[counter].deleted = true;
+        foreach (index; tables[table_name].indexes) {
+          if (index.col_index == predicts[0].col_index) {
+            index.btree.remove(record.values[index.col_index], counter);
+          }
+        }
       }
+      counter += 1;
     }
-    tables[table_name].records = result;
+    // tables[table_name].records = result;
   }
 }
 
@@ -92,7 +102,13 @@ void save_records() {
           switch (table.schema.cols[counter].type) {
             case ColType.CKint:
               writeln("int");
-              content ~= to!char(to!int(value));
+              int t1 = to!int(value) / 255 / 255 / 255;
+              content ~= to!char(t1);
+              int t2 = (to!int(value) - t1 * 255 * 255 * 255) / 255 / 255;
+              content ~= to!char(t2);
+              int t3 = (to!int(value) - t1 * 255 * 255 * 255 - t2 * 255 * 255) / 255;
+              content ~= to!char(t3);
+              content ~= to!char(to!int(value) % 255);
               break;
             case ColType.CKchar:
               writeln("char");
@@ -145,8 +161,8 @@ void load_records(string table_name, Schema schema, ref Table table) {
             if (content[current] == 124) {
               return;
             }
-            string val = to!string(to!int(content[current]));
-            current += 1;
+            string val = to!string(to!int(content[current]) * 255 * 255 * 255 + to!int(content[current + 1]) * 255 * 255 + to!int(content[current + 2]) * 255 + to!int(content[current + 3]));
+            current += 4;
             values ~= val;
             break;
           case ColType.CKchar:

@@ -20,13 +20,13 @@ void create_table(string name, Column[] cols, int pk) {
   foreach (col; table.schema.cols) {
     switch (col.type) {
       case ColType.CKint:
-        table.schema.size += int.sizeof;
+        table.schema.size += 4;
         break;
       case ColType.CKfloat:
         table.schema.size += float.sizeof;
         break;
       case ColType.CKchar:
-        table.schema.size += char.sizeof * col.size;
+        table.schema.size += 1 * col.size;
         break;
       default:
         writeln("error");

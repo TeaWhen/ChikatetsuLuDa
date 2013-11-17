@@ -1,4 +1,4 @@
 create table student (
     id int unique,
-    name char (10)
+    name char (20)
 );

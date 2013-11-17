@@ -20,7 +20,7 @@ File load_file(string filename) {
 File create_file(string filename) {
   _init();
   string path = format("%s/%s", BASE_PATH, filename);
-  return File(path, "wb");
+  return File(path, "ab+");
 }
 
 int delete_file(string filename) {

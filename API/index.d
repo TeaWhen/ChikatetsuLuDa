@@ -40,7 +40,7 @@ void create_index(string name, string table_name, string col_name) {
       writeln(i);
     btree.insert(tables[table_name].records[i].values[index.col_index], i);
   }
-  btree.print();
+  // btree.print();
   index.btree = btree;
   tables[table_name].indexes ~= index;
 
@@ -74,23 +74,29 @@ void save_indexes(string name, string table_name) {
   auto f = create_file(file_name);
   foreach (index; tables[table_name].indexes) {
     if (index.name == name) {
-      f.writeln(index.name);
-      f.writeln(index.table_name);
-      f.writeln(index.col_index);
       // Save Index
       auto archive = new XmlArchive!(char);
       auto serializer = new Serializer(archive);
-      // f.writeln(to!string(archive.untypedData));
+      serializer.serialize(index);
+      f.writeln(to!string(archive.untypedData));
       break;
     }
   }
 }
 
 Index[] load_indexes(string name, string table_name) {
+  writeln("loading index...");
   Index[] indexes;
   string file_name = format("%s_%s.%s", table_name, name, INDEX_EXTENSION);
   auto f = load_file(file_name);
-  indexes = to!(Index[])(split(f.readln()));
+  string val;
+  while (!f.eof()) {
+    val ~= f.readln();
+  }
+  auto archive = new XmlArchive!(char);
+  auto serializer = new Serializer(archive);
+  archive.beginUnarchiving(val);
+  indexes ~= serializer.deserialize!(Index)(archive.untypedData);
   writeln(indexes);
   return indexes;
 }

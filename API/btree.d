@@ -93,7 +93,7 @@ class BTree {
     } else {
       node.children[child_index].indexes ~= index;
     }
-    writeln(root);
+    //writeln(root);
   }
 
   void remove (string val, uint index) {
@@ -101,7 +101,7 @@ class BTree {
   }
 
   void _remove (string val, uint index, ref Node node) {
-    writeln("_remove");
+    // writeln("_remove");
     uint child_index;
     for (uint left = 0, right = node.children.length - 1; left != right; ) {
       if (less(val, node.children[left].val)) {
@@ -130,13 +130,13 @@ class BTree {
         child_index = mid;
       }
     }
-    writeln(child_index);
+    // writeln(child_index);
     if (bigger(val, node.children[child_index].val)) {
 
     } else if (less(val, node.children[child_index].val)) {
 
     } else {
-      writeln("inside");
+      // writeln("inside");
       for (int i = 0; i < node.children[child_index].indexes.length; i++) {
         if (node.children[child_index].indexes[i] == index) {
           uint[] indexes;
@@ -190,7 +190,7 @@ class BTree {
         child_index = mid;
       }
     }
-    writeln(child_index);
+    // writeln(child_index);
     if (bigger(val, node.children[child_index].val)) {
 
     } else if (less(val, node.children[child_index].val)) {

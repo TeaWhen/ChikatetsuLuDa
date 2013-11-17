@@ -166,10 +166,12 @@ void _handler(string input) {
       }
       writeln("");
       for (int i = 0; i < records.length; i++) {
-        for (int j = 0; j < tables[table_name].schema.cols.length; j++){
-          write(records[i].values[j], '\t');
+        if (!records[i].deleted) {
+          for (int j = 0; j < tables[table_name].schema.cols.length; j++){
+            write(records[i].values[j], '\t');
+          }
+          writeln("");
         }
-        writeln("");
       }
       return;
     }
