@@ -50,17 +50,19 @@ Record[] select_record(string table_name, Predict[] predicts) {
     bool is_indexed = false;
     for (uint i = 0; i < tables[table_name].indexes.length; i++) {
       if (tables[table_name].indexes[i].col_index == predict.col_index) {
-        is_indexed = true;
-        uint[] indexes_raw = tables[table_name].indexes[i].btree.find(predict.value);
-        uint[] indexes_t;
-        for (uint j = 0; j < indexes.length; j++) {
-          for (uint k = 0; k < indexes_raw.length; k++) {
-            if (indexes[j] == indexes_raw[k]) {
-              indexes_t ~= indexes[j];
+        if (predict.type == PredictOPType.eq) {
+          is_indexed = true;
+          uint[] indexes_raw = tables[table_name].indexes[i].btree.find(predict.value);
+          uint[] indexes_t;
+          for (uint j = 0; j < indexes.length; j++) {
+            for (uint k = 0; k < indexes_raw.length; k++) {
+              if (indexes[j] == indexes_raw[k]) {
+                indexes_t ~= indexes[j];
+              }
             }
           }
+          indexes = indexes_t;
         }
-        indexes = indexes_t;
       }
     }
     if (!is_indexed) {

@@ -97,7 +97,7 @@ Index[] load_indexes(string name, string table_name) {
   auto serializer = new Serializer(archive);
   archive.beginUnarchiving(val);
   indexes ~= serializer.deserialize!(Index)(archive.untypedData);
-  writeln(indexes);
+  // writeln(indexes);
   return indexes;
 }
 
